@@ -1,0 +1,110 @@
+---
+title: "Investigate the number of marriage licenses issued in the Greater Toronto Area since 2011: The number of marriages is not declining as reported"
+author: 
+  - Shiji Zhang
+thanks: "Code and data are available at: https://github.com/Northboi/TorontoMarriage"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "There is a growing trend of people opting not to marry or engage in romantic relationships. This report aims to investigate the total number of marriage licenses issued each year in the Greater Toronto Area from 2011 to 2023 and the total number of marriage licenses issued by different civic centers during this period to find if the report about declining marriages is true. I found that the number of marriage licenses issued of recent years in the GTA has remained stable except for 2020 and 2021, the two years most affected by the outbreak of the pandemic"
+output:
+  bookdown::pdf_document2
+toc: TRUE
+bibliography: reference.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(knitr)
+```
+
+\newpage
+
+# Introduction
+
+Marriage is the result of love between two people and is an important part of building a family. In most cases, marriage becomes the choice of a couple when they have complete control over their current lives and are ready to move on to the next phase of their lives. But nowadays, we often hear that more and more people choose not to get married or even fall in love. This may be because instead of taking on family responsibilities, they prefer to just satisfy themselves every day instead of being with a partner.[@cite3] People's current concept of marriage is affected by many factors, such as the need for financial stability and the emphasis on personal happiness. It is not only people's subjective factors that can determine the number of marriages, objective factors such as the social economy will also have an impact on the number of marriage certificates issued. Less disposable income will make people feel less secure about their futures and those of their partners, so as individuals choose to be cautious in the face of economic instability, the number of marriages may increase. decline. In the same year, cultural centers in different regions will also issue different numbers of marriage licenses because each region has different economic and other external conditions. Therefore, we need to consider the above subjective and objective factors to judge whether the number of people getting married today is really decreasing as reported.
+
+The Marriage License Statistics Data of Toronto provides the number of marriage licenses issued each month by civic centers in four different regions of the Greater Toronto Area from 2011 to 2023. The four different regions are East Toronto (ET), North York (NY), Scarbough (SC) and Toronto (TO). In Section 2.1, this data set is introduced and first used to divide the period from 2011 to 2023 The total number of marriage licenses issued each year during these 13 years was visualized. As can be seen from Figure 1, except for 2020 and 2021, the two years most affected by the outbreak of the pandemic, the number of marriage licenses issued in the GTA has remained stable. In Section 2.2, this data set is introduced for the second time to visualize the number of marriage licenses issued by cultural centers in different regions in the past 13 years. It was found that the number of marriage licenses issued by various entertainment centers has not dropped sharply in recent years, but the number issued in the Toronto area has increased significantly. This suggests that the number of marriages has not declined and remains stable barring external influences such as the pandemic.
+
+# Data
+## The total number of marriage licenses issued each year in the GTA region
+
+To investigate the number of marriage licenses issued in the Greater Toronto Area, I collected the Marriage License Statistics from Open Data Toronto[@rOpenDataToronto]. The data set includes the number of marriage licenses issued each month by civic centers in four different regions of the Greater Toronto Area from 2011 to 2023. The data set includes 528 observations of marriage licenses issued each month by civic centers in four different regions of the Greater Toronto Area from 2011 to 2023. variables, and the three variables focused on in this study are CIVIC_CENTRE, MARRIAGE_LICENSES, TIME_PERIOD.And after cleaning, I added a column called "Year". By using R [@citeR], and R packages “tidyverse” [@citetidyverse], “dplyr” [@citedplyr], “janitor” [@citejanitor], and “knitr” [@citeknitr], readr [@rReadr], ggplot2[@rGgplot2], lubridate [@citelubridate]. And the following table (Table 1) is an extract of the first ten rows of cleaned dataset
+
+```{r echo=FALSE}
+toronto_marriage_clean <- read.csv("cleaned_toronto_marriage.csv") %>% mutate(YEAR = as.numeric(substr(TIME_PERIOD, 1, 4))) %>% filter(YEAR >= 2011 & YEAR <= 2023)
+
+# Rename, select top 10, and create table
+toronto_marriage_clean %>% 
+  rename('id' = X_id, 'Civic Centre' = CIVIC_CENTRE, 'Number of marriage licenses' = MARRIAGE_LICENSES, 'Time period' = TIME_PERIOD, 'Year' = YEAR) %>% 
+  head(10) %>% 
+  kable(caption = "Table 1: Number of marriage licenses issued in GTA")
+```
+
+
+
+
+In the first ten rows of the Marriage License Statistics data set shown in Table 1, the id is just the number of each data and has no meaning. Civic Center represents the area where the civic center is located. Time period represents the year and month when the marriage certificate was issued, and Year only represents the year. As I mentioned before, the concept of Year is introduced after cleaning the data to make it more convenient when drawing graphs.
+
+```{r echo=FALSE}
+
+# Create a new column 'YEAR' by extracting the first four characters of 'TIME_PERIOD
+# Aggregate the data by year
+annual_marriage_data <- toronto_marriage_clean %>%
+  group_by(YEAR) %>%
+  summarise(Total_Licenses = sum(MARRIAGE_LICENSES, na.rm = TRUE))
+
+# Plot the bar chart
+ggplot(annual_marriage_data, aes(x = as.factor(YEAR), y = Total_Licenses)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  scale_x_discrete(limits = as.character(2011:2023)) +
+  labs(title = "Figure 1:Total Marriage Licenses Issued per Year",
+       x = "Year",
+       y = "Total Marriage Licenses Issued") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# Ensure that you replace "path_to_your_file.csv" with the actual path to your CSV file.
+
+```
+Figure 1 shows the total marriage licenses issued per year in the GTA region since 2011. In the figure, it is not difficult to find that before 2020, the total number of marriage licenses issued each year is very stable, around 15,000. And the overall trend is slowly rising. But in 2020, the number of marriage licenses issued dropped by nearly half. This is because of the outbreak of the pandemic in 2020, not only did people spend several months quarantined, but also the civic centers were unable to operate most of the time due to the regulations during the pandemic. As for the slow rebound in the number of marriage licenses issued in 2021, it is a sequelae of the 2020 pandemic. Before the pandemic, the unemployment rate in the Toronto area reached 7.3% in March 2019 [@cite1]. After the pandemic, until July 2021, the unemployment rate reached 9.4% and was still higher than the pre-pandemic unemployment rate. The socioeconomic downturn caused by high unemployment has reduced people's disposable income, making it impossible for many people to ensure a stable life for themselves and their partners after marriage. Therefore, this has become a big reason that prevents people from getting married in 2020. In 2022 and 2023, the number of marriage licenses issued in the GTA region began to gradually return to normal levels and has reached pre-pandemic levels in 2023. Using these data to examine the media's statement that "people increasingly don't want to get married", we can find that this is not true for GTA at present.
+
+## The number of marriage licenses issued each year in each region
+
+
+```{r echo=FALSE}
+# Create a new column 'YEAR' by extracting the first four characters of 'TIME_PERIOD'
+toronto_marriage_clean <- toronto_marriage_clean %>%
+  mutate(YEAR = as.numeric(substr(TIME_PERIOD, 1, 4))) %>%
+  filter(YEAR >= 2011 & YEAR <= 2023)
+
+# Aggregate the data by year and region (CIVIC_CENTRE)
+annual_regional_data <- toronto_marriage_clean %>%
+  group_by(YEAR, CIVIC_CENTRE) %>%
+  summarise(Total_Licenses = sum(MARRIAGE_LICENSES, na.rm = TRUE), .groups = 'drop') # Add .groups = 'drop'
+
+# Plot the line graph
+ggplot(annual_regional_data, aes(x = YEAR, y = Total_Licenses, group = CIVIC_CENTRE, color = CIVIC_CENTRE)) +
+  geom_line() +
+  geom_point() + # Optional: to show points on the line
+  scale_x_continuous(breaks = 2011:2023) +
+  labs(title = "Figure 2:Annual Marriage License Issuance by Region (2011-2023)",
+       x = "Year",
+       y = "Total Marriage Licenses Issued") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# Ensure that you replace "path_to_your_file.csv" with the actual path to your CSV file.
+
+
+```
+In Figure 2, it uses a line chart to show the number of marriage licenses issued by each entertainment center in each year from 2011 to 2023 (the data for East Toronto and Scarbough are only counted until 2021). In this picture, we can see the trends and changes in the annual publication volume of each entertainment center, which is also the characteristic of the line chart. Also taking 2020 as the dividing line, before 2020, the number of marriage licenses issued by the cultural centers in four different regions was stable and level. After 2020, the number of marriage licenses issued in Toronto increased rapidly and reached a peak in 2023. Although North York's data did not rise, it also returned to pre-pandemic levels in 2023. Although there are no data for East Toronto and Scarbough after 2021, the issuance of marriage licenses in Toronto in 2023 has reached about double the pre-pandemic level, and the data in North York has also returned to pre-pandemic levels. Therefore, we can say that the number of marriage licenses issued in the GTA in 2023 will be at least the same as the number before the pandemic, and will most likely be higher than before the pandemic. Judging from the current data for 2023, people’s pursuit of marriage is increasing instead of decreasing. Therefore, relying on Figure 2 to examine the media's statement that "people increasingly don't want to get married", this statement still does not hold true for the GTA situation.
+
+# Discuss
+
+Analysis of the data set "Marriage License Statistics" shows that the current number of marriage licenses issued in the Greater Toronto Area does not prove that people are increasingly resistant to marriage. On the contrary, you can see from Figure 2 that the number of marriage licenses issued in Toronto will nearly double in 2023. What the entire Section 2 expresses is that people’s pursuit of marriage in GTA has not weakened, except that the total number of marriage licenses issued in 2020 has dropped significantly as shown in Figures 1 and 2. But this can be explained by the 2020 pandemic and the resulting economic depression. Less disposable income makes the future full of uncertainty, and many people have given up on getting married in 2020. However, this is a sudden objective factor. Therefore, after analysis, we found that what the media reported was not necessarily correct, and some media fabricated some fake news just to attract attention. To summarize real results, the most important thing is to have reliable and authentic data and sources.
+ 
+\newpage
+
+# References
