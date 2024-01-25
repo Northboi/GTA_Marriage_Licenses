@@ -3,10 +3,13 @@ title: "Investigate the number of marriage licenses issued in the Greater Toront
 author: 
   - Shiji Zhang
 thanks: "Code and data are available at: https://github.com/Northboi/GTA_Marriage_Licenses"
-date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "There is a growing trend of people opting not to marry or engage in romantic relationships. This report aims to investigate the total number of marriage licenses issued each year in the Greater Toronto Area from 2011 to 2023 and the total number of marriage licenses issued by different civic centers during this period to find if the report about declining marriages is true. I found that the number of marriage licenses issued of recent years in the GTA has remained stable except for 2020 and 2021, the two years most affected by the outbreak of the pandemic"
-output:
-  bookdown::pdf_document2
+date: "`r Sys.time()`"
+date-format: "D MMMM YYYY"
+abstract: |
+  # Abstract
+  "There is a growing trend of people opting not to marry or engage in romantic relationships. This report aims to investigate the total number of marriage licenses issued each year in the Greater Toronto Area from 2011 to 2023 and the total number of marriage licenses issued by different civic centers during this period to find if the report about declining marriages is true. I found that the number of marriage licenses issued of recent years in the GTA has remained stable except for 2020 and 2021, the two years most affected by the outbreak of the pandemic"
+format: pdf
+number-sections: true
 toc: TRUE
 bibliography: reference.bib
 ---
