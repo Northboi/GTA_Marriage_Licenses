@@ -6,7 +6,7 @@ This report aims to investigate the total number of marriage licenses issued eac
 
 ## File Structure
 - Input folder includes a data folder with all raw datas.
-- Output folder includes the paper, R Markdown file of the paper, and references.
+-- Output folder includes the paper, R Markdown file of the paper, and references.
 - Script folder contains the R file that used to simulate, download and clean data.
 
 ## LLMs statement
